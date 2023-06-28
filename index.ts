@@ -9,15 +9,24 @@ class StartLevel extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image(
-      'background',
-      'https://static.vecteezy.com/system/resources/thumbnails/009/877/673/small_2x/pixel-art-sky-background-with-clouds-cloudy-blue-sky-for-8bit-game-on-white-background-vector.jpg'
-    );
+    this.load.baseURL =
+      'https://neoalchemy.github.io/flappy-birds-phaser-tgewwg/';
+    this.load.image('pixel-sky', 'static/assets/pixel-sky.png');
+    this.load.image('background', 'static/assets/background.png');
   }
 
   create() {
-    const background = this.add.image(100, 100, 'background');
+    const background = this.add.image(100, 100, 'pixel-sky');
     background.setDisplaySize(800, 800);
+
+    const modalWindow = this.add.image(200, 200, 'background');
+    const bitmapFont = this.add.bitmapText(
+      230,
+      230,
+      null,
+      'Flappy Bird',
+      14
+    );
   }
 }
 
