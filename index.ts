@@ -68,8 +68,6 @@ class MainLevel extends Phaser.Scene {
       'FlappyBirdAnims',
       './static/assets/FlappyBirdAnims.json'
     );
-
-    
   }
 
   create() {
