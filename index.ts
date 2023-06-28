@@ -60,20 +60,45 @@ class MainLevel extends Phaser.Scene {
   preload() {
     this.load.baseURL =
       'https://neoalchemy.github.io/flappy-birds-phaser-tgewwg/';
-    this.load.image('FlappyBird', 'static/assets/FlappyBird-v2.png');
+    this.load.spritesheet('FlappyBird', 'static/assets/FlappyBird.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
     this.load.animation(
       'FlappyBirdAnims',
       './static/assets/FlappyBirdAnims.json'
     );
+
+    
   }
 
   create() {
     const background = this.add.image(100, 100, 'pixel-sky');
     background.setDisplaySize(800, 800);
 
-    const flappyBird = this.add.image(100, 200, 'FlappyBird');
+    const flappyBird = this.physics.add.sprite(100, 200, 'FlappyBird', 0);
+    flappyBird.anims.play('FlappyBirdFlying');
+    this.flappyBird = flappyBird;
 
-    this.anims.play('FlappyBirdFlying', flappyBird);
+    const cursorKeys = this.input.keyboard.createCursorKeys();
+    this.cursorKeys = cursorKeys;
+  }
+
+  private flappyBird: Phaser.GameObjects.Sprite;
+  private cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
+
+  update() {
+    this.moveFlappyBird();
+  }
+
+  moveFlappyBird() {
+    if (this.cursorKeys.space.isDown) {
+      this.flappyBird.y -= 2;
+      this.flappyBird.angle = 325;
+    } else {
+      this.flappyBird.y += 2;
+      this.flappyBird.angle = 0;
+    }
   }
 }
 
@@ -85,7 +110,7 @@ const config = {
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: { y: 200 },
+      gravity: { y: 0 },
     },
   },
   scene: [StartLevel, MainLevel],
