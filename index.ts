@@ -16,8 +16,8 @@ class StartLevel extends Phaser.Scene {
     this.load.bitmapFont({
       key: 'titillium',
       textureURL: 'static/assets/font/titillium-reg.png',
-      fontDataURL: 'static/assets/font/titillium-reg.fnt',
-    });
+      fontDataURL: 'static/assets/font/titillium-reg.xml',
+    }); //USE OF SNOWB (https://snowb.org/)
   }
 
   create() {
