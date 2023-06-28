@@ -13,7 +13,7 @@ class StartLevel extends Phaser.Scene {
       'https://neoalchemy.github.io/flappy-birds-phaser-tgewwg/';
     this.load.image('pixel-sky', 'static/assets/pixel-sky.png');
     this.load.image('background', 'static/assets/background.png');
-    this.load.bitmapFont('PressStart2P')
+    this.load.bitmapFont('Titillium');
   }
 
   create() {
