@@ -14,9 +14,9 @@ class StartLevel extends Phaser.Scene {
     this.load.image('pixel-sky', 'static/assets/pixel-sky.png');
     this.load.image('background', 'static/assets/background.png');
     this.load.bitmapFont({
-      key: 'Titillium',
-      textureURL: 'static/assets/font/Titillium.png',
-      fontDataURL: 'static/assets/font/Titillium.fnt',
+      key: 'titillium',
+      textureURL: 'static/assets/font/titillium.png',
+      fontDataURL: 'static/assets/font/titillium.fnt',
     });
   }
 
@@ -28,7 +28,7 @@ class StartLevel extends Phaser.Scene {
     const bitmapFont = this.add.bitmapText(
       130,
       130,
-      'Titillium',
+      'titillium',
       'Flappy Bird',
       30
     );
