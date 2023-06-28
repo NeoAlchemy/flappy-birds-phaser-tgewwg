@@ -60,7 +60,7 @@ class MainLevel extends Phaser.Scene {
   preload() {
     this.load.baseURL =
       'https://neoalchemy.github.io/flappy-birds-phaser-tgewwg/';
-    this.load.image('FlappyBird', 'static/assets/FlappyBird.png');
+    this.load.image('FlappyBird', 'static/assets/FlappyBird-v2.png');
     this.load.animation(
       'FlappyBirdAnims',
       './static/assets/FlappyBirdAnims.json'
