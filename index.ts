@@ -26,12 +26,27 @@ class StartLevel extends Phaser.Scene {
 
     const modalWindow = this.add.image(200, 200, 'background');
     const bitmapFont = this.add.bitmapText(
-      130,
+      120,
       130,
       'titillium',
       'Flappy Bird',
       30
     );
+
+    const button = this.add.rectangle(200, 230, 100, 30, 0xff0000);
+    this.newGameButton = button;
+    this.newGameButton.on('pointerdown', this.newGame, this);
+    this.add.text(165, 220, 'New Game', {
+      fontFamily: 'serif',
+      fontSize: '16px',
+      color: 'black',
+    });
+  }
+
+  private newGameButton: Phaser.GameObjects.Rectangle;
+
+  newGame() {
+    console.log('test');
   }
 }
 
