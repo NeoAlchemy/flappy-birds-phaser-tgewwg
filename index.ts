@@ -57,11 +57,23 @@ class MainLevel extends Phaser.Scene {
     super({ key: 'MainLevel' });
   }
 
-  preload() {}
+  preload() {
+    this.load.baseURL =
+      'https://neoalchemy.github.io/flappy-birds-phaser-tgewwg/';
+    this.load.image('FlappyBird', 'static/assets/FlappyBird.png');
+    this.load.animation(
+      'FlappyBirdAnims',
+      './static/assets/FlappyBirdAnims.json'
+    );
+  }
 
   create() {
     const background = this.add.image(100, 100, 'pixel-sky');
     background.setDisplaySize(800, 800);
+
+    const flappyBird = this.add.image(100, 200, 'FlappyBird');
+
+    this.anims.play('FlappyBirdFlying', flappyBird);
   }
 }
 
