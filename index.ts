@@ -91,8 +91,8 @@ class SplashLevel extends Phaser.Scene {
     });
 
     setTimeout(() => {
-      //this.scene.start('StartLevel');
-    }, 1500);
+      this.scene.start('StartLevel');
+    }, 2000);
   }
 
   update() {}
