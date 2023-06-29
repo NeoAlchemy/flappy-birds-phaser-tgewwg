@@ -4,12 +4,52 @@ import Phaser from 'phaser';
 import './style.css';
 
 /* ----------------------------------- START SCENE --------------------------------- */
-class StartLevel extends Phaser.Scene {
+class BootLevel extends Phaser.Scene {
   constructor() {
-    super({ key: 'StartLevel' });
+    super({ key: 'BootLevel' });
   }
 
   preload() {
+    this.load.image(
+      'logo',
+      'https://neoalchemy.github.io/intro-to-game-programming-2023/img/logo.png'
+    );
+  }
+
+  create() {
+    this.scene.start('SplashLevel');
+  }
+}
+
+/* ----------------------------------- START SCENE --------------------------------- */
+class SplashLevel extends Phaser.Scene {
+  constructor() {
+    super({ key: 'SplashLevel' });
+  }
+
+  preload() {
+    const logo = this.add.image(200, 100, 'logo');
+    logo.setScale(0.3);
+    this.logo = logo;
+
+    const text = this.add.text(-300, 200, ['NeoAlchemy', 'Game Industry'], {
+      fontFamily: 'Oswald',
+      fontSize: '32px',
+      fontStyle: 'bolder',
+      color: '#8C0F31',
+      align: 'center',
+    });
+    this.company = text;
+
+    const loading = this.add.text(180, 300, ['Loading...'], {
+      fontFamily: 'Arial',
+      fontSize: '12px',
+      color: 'black',
+      align: 'center',
+    });
+
+    // PRELOAD ITEMS
+
     this.load.baseURL =
       'https://neoalchemy.github.io/flappy-birds-phaser-tgewwg/';
     this.load.image('pixel-sky', 'static/assets/pixel-sky.png');
@@ -21,6 +61,40 @@ class StartLevel extends Phaser.Scene {
       fontDataURL: 'static/assets/font/TitilliumBlack.xml',
     }); //USE OF SNOWB (https://snowb.org/)
   }
+  private logo: Phaser.GameObjects.Image;
+  private company: Phaser.GameObjects.Text;
+
+  create() {
+    this.tweens.add({
+      targets: this.logo, //your image that must spin
+      rotation: 2 * Math.PI, //rotation value must be radian
+      ease: 'Bounce',
+      delay: 600,
+      duration: 600, //duration is in milliseconds
+    });
+
+    this.tweens.add({
+      targets: this.company, //your image that must spin
+      x: '130',
+      ease: 'Elastic',
+      duration: 500, //duration is in milliseconds
+    });
+
+    setTimeout(() => {
+      this.scene.start('StartLevel');
+    }, 1500);
+  }
+
+  update() {}
+}
+
+/* ----------------------------------- START SCENE --------------------------------- */
+class StartLevel extends Phaser.Scene {
+  constructor() {
+    super({ key: 'StartLevel' });
+  }
+
+  preload() {}
 
   create() {
     const background = this.add.image(100, 100, 'pixel-sky');
@@ -281,14 +355,14 @@ const config = {
   type: Phaser.AUTO,
   width: 400,
   height: 400,
-  backgroundColor: 0x0000ff,
+  backgroundColor: '0xF2D16D',
   physics: {
     default: 'arcade',
     arcade: {
       gravity: { y: 0 },
     },
   },
-  scene: [StartLevel, MainLevel, EndLevel],
+  scene: [BootLevel, SplashLevel, StartLevel, MainLevel, EndLevel],
 };
 
 const game = new Phaser.Game(config);
