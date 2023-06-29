@@ -18,8 +18,8 @@ class BootLevel extends Phaser.Scene {
       'https://neoalchemy.github.io/flappy-birds-phaser-tgewwg/';
     this.load.bitmapFont({
       key: 'Oswald',
-      textureURL: 'static/assets/font/OswaldLight.png',
-      fontDataURL: 'static/assets/font/OswaldLight.xml',
+      textureURL: 'static/assets/font/OswaldLightRed.png',
+      fontDataURL: 'static/assets/font/OswaldLightRed.xml',
     });
   }
 
