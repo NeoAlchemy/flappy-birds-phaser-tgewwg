@@ -68,6 +68,13 @@ class MainLevel extends Phaser.Scene {
       'FlappyBirdAnims',
       './static/assets/FlappyBirdAnims.json'
     );
+
+    this.load.image('BLPipeTile', 'static/assets/BLPipeTile.png');
+    this.load.image('BRPipeTile', 'static/assets/BRPipeTile.png');
+    this.load.image('TLPipeTile', 'static/assets/TLPipeTile.png');
+    this.load.image('TRPipeTile', 'static/assets/TRPipeTile.png');
+    this.load.image('TLUDPipeTile', 'static/assets/TLUpsideDownPipeTile.png');
+    this.load.image('TRUDPipeTile', 'static/assets/TRUpsideDownPipeTile.png');
   }
 
   create() {
@@ -78,15 +85,31 @@ class MainLevel extends Phaser.Scene {
     flappyBird.anims.play('FlappyBirdFlying');
     this.flappyBird = flappyBird;
 
+    this.group1 = this.createPipe(150, 2, 3);
+
     const cursorKeys = this.input.keyboard.createCursorKeys();
     this.cursorKeys = cursorKeys;
   }
 
   private flappyBird: Phaser.GameObjects.Sprite;
   private cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
+  private group1: Phaser.GameObjects.Group;
 
   update() {
     this.moveFlappyBird();
+
+    this.group1
+      .getChildren()
+      .forEach(function (gameObject: Phaser.GameObjects.Sprite) {
+        gameObject.x -= 1;
+      });
+
+    if (this.group1.children) {
+      let firstChild: Phaser.GameObjects.Sprite = this.group1.children[0];
+      if (firstChild && firstChild.x < 40) {
+        this.group1.destroy(true);
+      }
+    }
   }
 
   moveFlappyBird() {
@@ -97,6 +120,28 @@ class MainLevel extends Phaser.Scene {
       this.flappyBird.y += 2;
       this.flappyBird.angle = 0;
     }
+  }
+
+  createPipe(positionX, topLength, bottomLength): Phaser.GameObjects.Group {
+    let group = this.add.group();
+    let k = 0;
+    for (k = 0; k < topLength; k++) {
+      group.add(this.add.sprite(positionX, 16 + k * 32, 'BLPipeTile'));
+      group.add(this.add.sprite(positionX + 32, 16 + k * 32, 'BRPipeTile'));
+    }
+    group.add(this.add.sprite(positionX, 16 + k * 32, 'TLUDPipeTile'));
+    group.add(this.add.sprite(positionX + 32, 16 + k * 32, 'TRUDPipeTile'));
+
+    let i = 0;
+    for (i = 0; i < bottomLength; i++) {
+      group.add(this.add.sprite(positionX, 400 - 16 - i * 32, 'BLPipeTile'));
+      group.add(
+        this.add.sprite(positionX + 32, 400 - 16 - i * 32, 'BRPipeTile')
+      );
+    }
+    group.add(this.add.sprite(positionX, 400 - 16 - i * 32, 'TLPipeTile'));
+    group.add(this.add.sprite(positionX + 32, 400 - 16 - i * 32, 'TRPipeTile'));
+    return group;
   }
 }
 
