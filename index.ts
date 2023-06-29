@@ -14,6 +14,8 @@ class BootLevel extends Phaser.Scene {
       'logo',
       'https://neoalchemy.github.io/intro-to-game-programming-2023/img/logo.png'
     );
+    this.load.baseURL =
+      'https://neoalchemy.github.io/flappy-birds-phaser-tgewwg/';
     this.load.bitmapFont({
       key: 'Oswald',
       textureURL: 'static/assets/font/OswaldLight.png',
@@ -77,19 +79,19 @@ class SplashLevel extends Phaser.Scene {
 
     this.tweens.add({
       targets: this.companyLine1, //your image that must spin
-      x: '130',
+      x: '140',
       ease: 'Elastic',
       duration: 500, //duration is in milliseconds
     });
     this.tweens.add({
       targets: this.companyLine2, //your image that must spin
-      x: '110',
+      x: '125',
       ease: 'Elastic',
       duration: 500, //duration is in milliseconds
     });
 
     setTimeout(() => {
-      this.scene.start('StartLevel');
+      //this.scene.start('StartLevel');
     }, 1500);
   }
 
