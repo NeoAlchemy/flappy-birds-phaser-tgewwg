@@ -14,6 +14,11 @@ class BootLevel extends Phaser.Scene {
       'logo',
       'https://neoalchemy.github.io/intro-to-game-programming-2023/img/logo.png'
     );
+    this.load.bitmapFont({
+      key: 'Oswald',
+      textureURL: 'static/assets/font/OswaldLight.png',
+      fontDataURL: 'static/assets/font/OswaldLight.xml',
+    });
   }
 
   create() {
@@ -32,14 +37,10 @@ class SplashLevel extends Phaser.Scene {
     logo.setScale(0.3);
     this.logo = logo;
 
-    const text = this.add.text(-300, 200, ['NeoAlchemy', 'Game Industry'], {
-      fontFamily: 'Oswald',
-      fontSize: '32px',
-      fontStyle: 'bolder',
-      color: '#8C0F31',
-      align: 'center',
-    });
-    this.company = text;
+    const text1 = this.add.bitmapText(-300, 200, 'Oswald', 'NeoAlchemy', 32);
+    this.companyLine1 = text1;
+    const text2 = this.add.bitmapText(-300, 230, 'Oswald', 'Game Industry', 32);
+    this.companyLine2 = text2;
 
     const loading = this.add.text(180, 300, ['Loading...'], {
       fontFamily: 'Arial',
@@ -62,7 +63,8 @@ class SplashLevel extends Phaser.Scene {
     }); //USE OF SNOWB (https://snowb.org/)
   }
   private logo: Phaser.GameObjects.Image;
-  private company: Phaser.GameObjects.Text;
+  private companyLine1: Phaser.GameObjects.BitmapText;
+  private companyLine2: Phaser.GameObjects.BitmapText;
 
   create() {
     this.tweens.add({
@@ -74,8 +76,14 @@ class SplashLevel extends Phaser.Scene {
     });
 
     this.tweens.add({
-      targets: this.company, //your image that must spin
+      targets: this.companyLine1, //your image that must spin
       x: '130',
+      ease: 'Elastic',
+      duration: 500, //duration is in milliseconds
+    });
+    this.tweens.add({
+      targets: this.companyLine2, //your image that must spin
+      x: '110',
       ease: 'Elastic',
       duration: 500, //duration is in milliseconds
     });
