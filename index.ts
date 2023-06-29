@@ -85,7 +85,9 @@ class MainLevel extends Phaser.Scene {
     flappyBird.anims.play('FlappyBirdFlying');
     this.flappyBird = flappyBird;
 
-    this.group1 = this.createPipe(150, 2, 3);
+    this.group1 = this.createPipe(100, 2, 3);
+    this.group2 = this.createPipe(300, 2, 3);
+    this.group3 = this.createPipe(500, 2, 3);
 
     const cursorKeys = this.input.keyboard.createCursorKeys();
     this.cursorKeys = cursorKeys;
@@ -94,20 +96,34 @@ class MainLevel extends Phaser.Scene {
   private flappyBird: Phaser.GameObjects.Sprite;
   private cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
   private group1: Phaser.GameObjects.Group;
+  private group2: Phaser.GameObjects.Group;
+  private group3: Phaser.GameObjects.Group;
 
   update() {
     this.moveFlappyBird();
 
-    this.group1
-      .getChildren()
-      .forEach(function (gameObject: Phaser.GameObjects.Sprite) {
-        gameObject.x -= 1;
-      });
+    this.managePipeGroup('group1');
+    this.managePipeGroup('group2');
+    this.managePipeGroup('group3');
+  }
 
-    if (this.group1.children) {
-      let firstChild: Phaser.GameObjects.Sprite = this.group1.children[0];
-      if (firstChild && firstChild.x < 40) {
-        this.group1.destroy(true);
+  managePipeGroup(key: string) {
+    if (this[key].children) {
+      this.physics.collide(this[key], this.flappyBird, () => {
+        console.log('hit');
+      });
+      this[key]
+        .getChildren()
+        .forEach(function (gameObject: Phaser.GameObjects.Sprite) {
+          gameObject.x -= 1;
+        });
+
+      if (this[key].children) {
+        let sprite: any = this[key].getChildren()[0];
+        if (sprite.x < -70) {
+          this[key].destroy(true);
+          this[key] = this.createPipe(500, 2, 3);
+        }
       }
     }
   }
