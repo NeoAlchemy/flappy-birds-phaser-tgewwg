@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 // Import stylesheets
 import './style.css';
 
+/* ----------------------------------- START SCENE --------------------------------- */
 class StartLevel extends Phaser.Scene {
   constructor() {
     super({ key: 'StartLevel' });
@@ -52,6 +53,67 @@ class StartLevel extends Phaser.Scene {
   }
 }
 
+/* ----------------------------------- END SCENE --------------------------------- */
+
+class EndLevel extends Phaser.Scene {
+  constructor() {
+    super({ key: 'EndLevel' });
+  }
+
+  preload() {
+    this.load.baseURL =
+      'https://neoalchemy.github.io/flappy-birds-phaser-tgewwg/';
+    this.load.image('pixel-sky', 'static/assets/pixel-sky.png');
+    this.load.image('background', 'static/assets/background.png');
+    this.load.image('button', 'static/assets/button.png');
+    this.load.bitmapFont({
+      key: 'titillium',
+      textureURL: 'static/assets/font/TitilliumBlack.png',
+      fontDataURL: 'static/assets/font/TitilliumBlack.xml',
+    }); //USE OF SNOWB (https://snowb.org/)
+  }
+
+  create(data) {
+    const background = this.add.image(100, 100, 'pixel-sky');
+    background.setDisplaySize(800, 800);
+
+    const modalWindow = this.add.image(200, 200, 'background');
+    const gameOverText = this.add.bitmapText(
+      120,
+      130,
+      'titillium',
+      'Game Over',
+      30
+    );
+
+    const scoreText = this.add.bitmapText(
+      180,
+      160,
+      'titillium',
+      String(data.points),
+      30
+    );
+
+    const button = this.add.sprite(200, 230, 'button');
+    this.newGameButton = button;
+    this.newGameButton.setInteractive();
+    this.newGameButton.on('pointerdown', this.newGame, this);
+    this.add.text(165, 220, 'New Game', {
+      fontFamily: 'serif',
+      fontSize: '16px',
+      color: 'black',
+    });
+  }
+
+  private newGameButton: Phaser.GameObjects.Sprite;
+
+  newGame() {
+    this.scene.start('MainLevel');
+  }
+}
+
+/* ----------------------------------- MAIN SCENE --------------------------------- */
+
 class MainLevel extends Phaser.Scene {
   constructor() {
     super({ key: 'MainLevel' });
@@ -85,12 +147,14 @@ class MainLevel extends Phaser.Scene {
     flappyBird.anims.play('FlappyBirdFlying');
     this.flappyBird = flappyBird;
 
-    this.group1 = this.createPipe(100, 2, 3);
-    this.group2 = this.createPipe(300, 2, 3);
-    this.group3 = this.createPipe(500, 2, 3);
+    this.group1 = this.createPipe(200);
+    this.group2 = this.createPipe(400);
+    this.group3 = this.createPipe(600);
 
     const cursorKeys = this.input.keyboard.createCursorKeys();
     this.cursorKeys = cursorKeys;
+
+    this.points = 0;
   }
 
   private flappyBird: Phaser.GameObjects.Sprite;
@@ -98,6 +162,7 @@ class MainLevel extends Phaser.Scene {
   private group1: Phaser.GameObjects.Group;
   private group2: Phaser.GameObjects.Group;
   private group3: Phaser.GameObjects.Group;
+  private points: number;
 
   update() {
     this.moveFlappyBird();
@@ -105,13 +170,22 @@ class MainLevel extends Phaser.Scene {
     this.managePipeGroup('group1');
     this.managePipeGroup('group2');
     this.managePipeGroup('group3');
+
+    this.checkHitFloor();
   }
 
   managePipeGroup(key: string) {
     if (this[key].children) {
-      this.physics.collide(this[key], this.flappyBird, () => {
-        console.log('hit');
-      });
+      // COLLISION
+      this.physics.collide(
+        this[key],
+        this.flappyBird,
+        this.hitPipe,
+        null,
+        this
+      );
+
+      // MOVE PIPES
       this[key]
         .getChildren()
         .forEach(function (gameObject: Phaser.GameObjects.Sprite) {
@@ -120,12 +194,34 @@ class MainLevel extends Phaser.Scene {
 
       if (this[key].children) {
         let sprite: any = this[key].getChildren()[0];
+
+        // SCORE POINTS
+        if (sprite.x == 30) {
+          this.score();
+        }
+
+        // DESTROY PIPES AND CREATE NEW
         if (sprite.x < -70) {
           this[key].destroy(true);
-          this[key] = this.createPipe(500, 2, 3);
+          this[key] = this.createPipe(500);
         }
       }
     }
+  }
+
+  hitPipe() {
+    this.scene.start('EndLevel', { points: this.points });
+  }
+
+  checkHitFloor() {
+    if (this.flappyBird.y > 432) {
+      this.scene.start('EndLevel', { points: this.points });
+    }
+  }
+
+  score() {
+    this.points++;
+    console.log(this.points);
   }
 
   moveFlappyBird() {
@@ -138,28 +234,48 @@ class MainLevel extends Phaser.Scene {
     }
   }
 
-  createPipe(positionX, topLength, bottomLength): Phaser.GameObjects.Group {
+  createPipe(positionX): Phaser.GameObjects.Group {
+    const MAX_TILES = 10;
+    const GAP_DIFFICULTY = 3;
+
+    let topLength = Phaser.Math.Between(0, MAX_TILES - 1 - GAP_DIFFICULTY);
+    let bottomLength = MAX_TILES - GAP_DIFFICULTY - topLength;
+
     let group = this.add.group();
     let k = 0;
     for (k = 0; k < topLength; k++) {
-      group.add(this.add.sprite(positionX, 16 + k * 32, 'BLPipeTile'));
-      group.add(this.add.sprite(positionX + 32, 16 + k * 32, 'BRPipeTile'));
+      group.add(this.physics.add.sprite(positionX, 16 + k * 32, 'BLPipeTile'));
+      group.add(
+        this.physics.add.sprite(positionX + 32, 16 + k * 32, 'BRPipeTile')
+      );
     }
-    group.add(this.add.sprite(positionX, 16 + k * 32, 'TLUDPipeTile'));
-    group.add(this.add.sprite(positionX + 32, 16 + k * 32, 'TRUDPipeTile'));
+    group.add(this.physics.add.sprite(positionX, 16 + k * 32, 'TLUDPipeTile'));
+    group.add(
+      this.physics.add.sprite(positionX + 32, 16 + k * 32, 'TRUDPipeTile')
+    );
 
     let i = 0;
     for (i = 0; i < bottomLength; i++) {
-      group.add(this.add.sprite(positionX, 400 - 16 - i * 32, 'BLPipeTile'));
       group.add(
-        this.add.sprite(positionX + 32, 400 - 16 - i * 32, 'BRPipeTile')
+        this.physics.add.sprite(positionX, 400 - 16 - i * 32, 'BLPipeTile')
+      );
+      group.add(
+        this.physics.add.sprite(positionX + 32, 400 - 16 - i * 32, 'BRPipeTile')
       );
     }
-    group.add(this.add.sprite(positionX, 400 - 16 - i * 32, 'TLPipeTile'));
-    group.add(this.add.sprite(positionX + 32, 400 - 16 - i * 32, 'TRPipeTile'));
+    group.add(
+      this.physics.add.sprite(positionX, 400 - 16 - i * 32, 'TLPipeTile')
+    );
+    group.add(
+      this.physics.add.sprite(positionX + 32, 400 - 16 - i * 32, 'TRPipeTile')
+    );
     return group;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                RUN GAME.                                   */
+/* -------------------------------------------------------------------------- */
 
 const config = {
   type: Phaser.AUTO,
@@ -172,7 +288,7 @@ const config = {
       gravity: { y: 0 },
     },
   },
-  scene: [StartLevel, MainLevel],
+  scene: [StartLevel, MainLevel, EndLevel],
 };
 
 const game = new Phaser.Game(config);
